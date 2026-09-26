@@ -28,22 +28,29 @@ export async function getProjectById(id: number): Promise<Project | null> {
     return rows[0] ?? null;
 }
 
+const ITEMS_PER_PAGE = 6;
 
-/*export const projects: Project[] = [
-{
-    id: 1,
-        title: 'Service Organization Manager',
-            description: 'A full-stack web app for managing organizations, projects, and categories, with role-based authentication and CRUD operations.',
-                type: 'school',
-                    technologies: ['Node.js', 'Express', 'EJS', 'PostgreSQL'],
-                        link: 'https://daniel-osorio-cse-340.onrender.com/'
-},
-{
-    id: 2,
-        title: 'AI Vision project',
-            description: 'A website that contains information about vision systems, currency calculator, forms and dynamic interaction.',
-                type: 'school',
-                    technologies: ['JavaScript', 'HTML', 'CSS'],
-                        link: 'https://dani-3108.github.io/WDD330--DO--finalproject/quote.html'
+export async function fetchFilteredProjects(query: string, currentPage: number) {
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+    const { rows } = await sql<Project>`
+    SELECT * FROM projects
+    WHERE title ILIKE ${'%' + query + '%'}
+       OR description ILIKE ${'%' + query + '%'}
+    ORDER BY id
+    LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+  `;
+
+    return rows;
 }
-];*/
+
+export async function fetchProjectsPages(query: string) {
+    const { rows } = await sql<{ count: string }>`
+    SELECT COUNT(*) FROM projects
+    WHERE title ILIKE ${'%' + query + '%'}
+       OR description ILIKE ${'%' + query + '%'}
+  `;
+
+    const count = Number(rows[0].count);
+    return Math.ceil(count / ITEMS_PER_PAGE);
+}
