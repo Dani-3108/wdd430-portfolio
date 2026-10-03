@@ -4,7 +4,9 @@ import { updateProject } from '@/lib/actions';
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
     const { id } = await props.params;
-    const project = await getProjectById(Number(id));
+    const numericId = Number(id);
+    if (Number.isNaN(numericId)) notFound();
+    const project = await getProjectById(numericId);
     if (!project) notFound();
 
     return (

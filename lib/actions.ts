@@ -63,6 +63,11 @@ export async function updateProject(id: string, formData: FormData) {
 }
 
 export async function deleteProject(id: string) {
-    await sql`DELETE FROM projects WHERE id = ${id}`;
-    revalidatePath('/projects', 'layout');
+    try {
+        await sql`DELETE FROM projects WHERE id = ${id}`;
+    } catch (error) {
+        console.error('Error deleting project:', error);
+        throw new Error('Failed to delete project. Please try again later.');
+    }
+    revalidatePath('/projects');
 }
