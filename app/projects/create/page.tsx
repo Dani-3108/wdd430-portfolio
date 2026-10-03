@@ -1,6 +1,12 @@
-import { createProject } from '@/lib/actions';
+import CreateProjectForm from './create-project-form';
 
-// app/projects/create/page.tsx
+export default function Page() {
+    return <CreateProjectForm />;
+}
+
+/*import { createProject } from '@/lib/actions';
+
+/* app/projects/create/page.tsx
 export default function Page() {
     return (
         <form className="project-form" action={createProject}>
@@ -24,4 +30,4 @@ export default function Page() {
             <button type="submit">Save Project</button>
         </form>
     );
-}
+}*/

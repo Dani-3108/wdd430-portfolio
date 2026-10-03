@@ -27,7 +27,9 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
             <label htmlFor="link">Link (optional)</label>
             <input id="link" name="link" type="url" defaultValue={project.link ?? ''} />
-
+            <label htmlFor="yearCompleted">Year Completed</label>
+            <input id="yearCompleted" name="yearCompleted" type="number" min="2000" max="2099"
+                defaultValue={project.year_completed ?? ''} required />
             <button type="submit">Update Project</button>
         </form>
     );

@@ -87,3 +87,8 @@ body {
   outline: 2px solid #043063;
   outline-offset: 2px;
 }
+.project-form .field-error {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: #b91c1c;
+}
