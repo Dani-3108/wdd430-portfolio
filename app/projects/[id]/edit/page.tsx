@@ -1,6 +1,20 @@
 import { notFound } from 'next/navigation';
 import { getProjectById } from '@/lib/projects-db';
 import { updateProject } from '@/lib/actions';
+import type { Metadata } from 'next';
+
+export async function generateMetadata(
+    props: { params: Promise<{ id: string }> }
+): Promise<Metadata> {
+    const { id } = await props.params;
+    const numericId = Number(id);
+    if (Number.isNaN(numericId)) return { title: 'Project Not Found' };
+
+    const project = await getProjectById(numericId);
+    if (!project) return { title: 'Project Not Found' };
+
+    return { title: `Edit ${project.title}` };
+}
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
     const { id } = await props.params;
