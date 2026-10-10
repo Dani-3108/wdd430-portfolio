@@ -1,21 +1,6 @@
 import ProjectList from '@/components/ProjectList';
 import { getProjects } from '@/lib/projects-db';
 
-/*const projects = [
-  {
-    title: 'Service Organization Manager',
-    description: 'A full-stack web app for managing organizations, projects, and categories, with role-based authentication and CRUD operations.',
-    technologies: ['Node.js', 'Express', 'EJS', 'PostgreSQL'],
-    link: 'https://daniel-osorio-cse-340.onrender.com/'
-  },
-  {
-    title: 'AI Vision project',
-    description: 'A website that contains information about vision systems, currency calculator, forms and dynamic interaction.',
-    technologies: ['JavaScript', 'HTML', 'CSS'],
-    link: 'https://dani-3108.github.io/WDD330--DO--finalproject/quote.html'
-  },
-];*/
-
 export default async function Home() {
   const projects = await getProjects();
   return (
@@ -30,3 +15,4 @@ export default async function Home() {
     </main>
   );
 }
+

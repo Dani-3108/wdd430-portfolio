@@ -4,6 +4,14 @@ import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
+import { signIn, auth } from '@/auth';
+import { AuthError } from 'next-auth';
+
+async function requireOwnerSession() {
+    const session = await auth();
+    if (!session?.user) throw new Error('Not authenticated');
+    return session;
+}
 
 const currentYear = new Date().getFullYear();
 
@@ -37,6 +45,7 @@ export type State = {
 };
 
 export async function createProject(prevState: State, formData: FormData): Promise<State> {
+    await requireOwnerSession();
     const parsed = ProjectFormSchema.safeParse(Object.fromEntries(formData));
     if (!parsed.success) {
         return {
@@ -66,6 +75,7 @@ export async function createProject(prevState: State, formData: FormData): Promi
 }
 
 export async function updateProject(id: string, formData: FormData) {
+    await requireOwnerSession();
     const parsed = ProjectFormSchema.safeParse(Object.fromEntries(formData));
     if (!parsed.success) throw new Error('Invalid project input.');
 
@@ -84,6 +94,7 @@ export async function updateProject(id: string, formData: FormData) {
 }
 
 export async function deleteProject(id: string) {
+    await requireOwnerSession();
     try {
         await sql`DELETE FROM projects WHERE id = ${id}`;
     } catch (error) {
@@ -91,4 +102,23 @@ export async function deleteProject(id: string) {
         throw new Error('Failed to delete project. Please try again later.');
     }
     revalidatePath('/projects');
+}
+
+export async function authenticate(
+    prevState: string | undefined,
+    formData: FormData,
+) {
+    try {
+        await signIn('credentials', formData);
+    } catch (error) {
+        if (error instanceof AuthError) {
+            switch (error.type) {
+                case 'CredentialsSignin':
+                    return 'Invalid email or password.';
+                default:
+                    return 'Something went wrong.';
+            }
+        }
+        throw error; // re-throw so Next.js handles redirects correctly
+    }
 }
